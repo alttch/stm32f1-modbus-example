@@ -38,7 +38,7 @@ fn main() -> ! {
     let rx = gpiob.pb11;
     let mut direction = gpiob.pb12.into_push_pull_output(&mut gpiob.crh); // dir ctrl 4 half duplex
     let serial = Serial::usart3(
-        // B10=DI, B11=R1, B12 = DE+RE
+        // B10=DI, B11=R0, B12=DE+RE
         dp.USART3,
         (tx, rx),
         &mut afio.mapr,
