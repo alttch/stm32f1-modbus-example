@@ -95,7 +95,7 @@ fn main() -> ! {
     let mut c: u32 = 0; // frame calc
     loop {
         macro_rules! exec_channel {
-            ($ch:expr, $obj:expr, $len:expr) => {
+            ($ch:expr, $obj:expr, $len:expr, $nto:expr) => {
                 $ch.set_memory_address($obj.as_ptr() as u32, true);
                 $ch.set_transfer_length($len);
                 atomic::compiler_fence(Ordering::Release);
@@ -103,11 +103,13 @@ fn main() -> ! {
                 let mut to = 0;
                 while $ch.in_progress() {
                     delay.delay_ms(1_u16);
-                    let remaining = $ch.get_ndtr() as usize;
-                    if remaining < $len {
-                        to = to + 1;
-                        if to > $len {
-                            break;
+                    if $nto {
+                        let remaining = $ch.get_ndtr() as usize;
+                        if remaining < $len {
+                            to = to + 1;
+                            if to > $len {
+                                break;
+                            }
                         }
                     }
                 }
@@ -121,10 +123,10 @@ fn main() -> ! {
         }
         led.set_high().unwrap();
         let frame: ModbusFrame = [0; 256];
-        exec_channel!(rx.channel, frame, 8);
+        exec_channel!(rx.channel, frame, 8, true);
         let len = guess_frame_len(&frame, ModbusProto::Rtu).unwrap();
         if len > 8 {
-            exec_channel!(rx.channel, frame[8..], len as usize);
+            exec_channel!(rx.channel, frame[8..], len as usize, true);
         }
         led.set_low().unwrap();
         c = c + 1;
@@ -137,7 +139,7 @@ fn main() -> ! {
         if process_frame(1, &frame, ModbusProto::Rtu, &mut response).is_ok() && !response.is_empty()
         {
             direction.set_high().ok();
-            exec_channel!(tx.channel, response.as_slice(), response.len());
+            exec_channel!(tx.channel, response.as_slice(), response.len(), false);
             delay.delay_ms(response.len() as u16); // make sure frame is sent before switching dir
             direction.set_low().ok();
         }
