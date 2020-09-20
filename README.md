@@ -33,4 +33,11 @@ cargo install cargo-flash # if not installed yed
 cargo flash --chip stm32f103C8 --release
 ```
 
+## What can it do
+
+Just the demo. You can read/write Modbus context with any Modbus/RTU client,
+get/set any Modbus registers.
+
+Input registers 0 and 1 contain processed frame counter (big-endian u32).
+
 Enjoy!
