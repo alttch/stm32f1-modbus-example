@@ -101,13 +101,14 @@ fn main() -> ! {
                 atomic::compiler_fence(Ordering::Release);
                 $ch.start();
                 let mut to = 0;
+                let timeout = $len * 2;
                 while $ch.in_progress() {
                     delay.delay_ms(1_u16);
                     if $nto {
                         let remaining = $ch.get_ndtr() as usize;
                         if remaining < $len {
                             to = to + 1;
-                            if to > $len {
+                            if to > timeout {
                                 break;
                             }
                         }
@@ -126,7 +127,7 @@ fn main() -> ! {
         exec_channel!(rx.channel, frame, 8, true);
         let len = guess_frame_len(&frame, ModbusProto::Rtu).unwrap();
         if len > 8 {
-            exec_channel!(rx.channel, frame[8..], len as usize, true);
+            exec_channel!(rx.channel, frame[8..], (len - 8) as usize, true);
         }
         led.set_low().unwrap();
         c = c + 1;
