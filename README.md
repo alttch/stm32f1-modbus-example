@@ -40,7 +40,7 @@ get/set any Modbus registers.
 
 Input registers 0 and 1 contain processed frame counter (big-endian u32).
 
-Rmodbus used with "smallcontext" features, so only registers 0-999 (all types)
+Rmodbus used with "smallcontext" feature, so only registers 0-999 (all types)
 are accessible.
 
 Enjoy!
