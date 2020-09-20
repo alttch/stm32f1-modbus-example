@@ -1,46 +1,29 @@
 [package]
-authors = ["divi255"]
+authors = ["Sergei S. <div@altertech.com>"]
 edition = "2018"
 readme = "README.md"
 name = "app"
 version = "0.1.0"
 
 [dependencies]
-cortex-m = "^0.6.3"      # Access to the generic ARM peripherals
-cortex-m-rt = "^0.6.12"  # Startup code for the ARM Core
-embedded-hal = "^0.2.4"  # Access to generic embedded functions (`set_high`)
-panic-halt = "^0.2.0"    # Panic handler
-nb = "0.1.2"
+cortex-m = "^0.6.3"
+cortex-m-rt = "^0.6.12"
+embedded-hal = "^0.2.4"
+panic-halt = "^0.2.0"
 rmodbus = { version = "0.3.9", features = ["nostd", "smallcontext", "single"] }
 fixedvec = "0.2.4"
-stm32f1 = {package="stm32f1xx-hal",version = "0.6.1", features = ["stm32f103", "rt"], path="/home/divisor/stm32f1xx-hal"}
+stm32f1 = { version = "0.6.0", features = ["stm32f103", "rt"] }
 
-# Uncomment for the panic example.
-# panic-itm = "0.4.1"
-
-# Uncomment for the allocator example.
-# alloc-cortex-m = "0.3.5"
-
-# Uncomment for the device example.
-# Update `memory.x`, set target to `thumbv7em-none-eabihf` in `.cargo/config`,
-# and then use `cargo build --examples device` to build it.
-# [dependencies.stm32f3]
-# features = ["stm32f303", "rt"]
-# version = "0.7.1"
-
-# Access to the stm32f103 HAL.
 [dependencies.stm32f1xx-hal]
-# Bluepill contains a 64kB flash variant which is called "medium density"
 features = ["stm32f103", "rt", "medium"]
 version = "^0.6.1"
 
-# this lets you use `cargo fix`!
 [[bin]]
 name = "app"
 test = false
 bench = false
 
 [profile.release]
-codegen-units = 1 # better optimizations
+codegen-units = 1
 features = ["stm32f103", "rt", "medium"]
-lto = true # better optimizations
+lto = true
